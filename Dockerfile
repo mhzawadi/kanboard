@@ -3,7 +3,7 @@ ARG MH_TAG
 FROM ${MH_ARCH}:${MH_TAG}
 MAINTAINER Matthew Horwood <matt@horwood.biz>
 
-ENV KANBOARD_VERSION 1.2.10
+ENV KANBOARD_VERSION 1.2.11
 ENV KANBOARD_TARBALL https://github.com/kanboard/kanboard/archive/v${KANBOARD_VERSION}.tar.gz
 
 VOLUME ["/var/www/html/kanboard", "/var/www/html/kanboard/data"]
