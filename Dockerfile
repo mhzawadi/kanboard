@@ -18,5 +18,4 @@ RUN apt-get update && \
     tar --strip 1 -xzf /usr/src/v${KANBOARD_VERSION}.tar.gz && \
     chown -R www-data:www-data /var/www/html/*
 
-ENTRYPOINT ["entrypoint.sh"]
 CMD ["apache2-foreground"]
