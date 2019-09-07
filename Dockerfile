@@ -12,6 +12,14 @@ WORKDIR /var/www/html
 RUN apt-get update && \
     apt-get -y install wget curl zip libzip-dev libgd-dev rsync && \
     apt-get clean; \
+    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
+    docker-php-ext-configure zip --with-libzip && \
+    docker-php-ext-install -j$(nproc) zip; \
+    docker-php-ext-install -j$(nproc) \
+          mysqli \
+          gd \
+          opcache; \
+    a2enmod rewrite; \
     cd /usr/src && \
     wget ${KANBOARD_TARBALL} && \
     cd /var/www/html && \
