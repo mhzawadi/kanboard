@@ -13,7 +13,7 @@ else
 fi
 
 # pull the existing image from the registry, if it exists, to use as a build cache
-docker pull $SOURCE_IMAGE:$SOURCE_IMAGE_TAG && export IMAGE_CACHE="--cache-from $SOURCE_IMAGE:$SOURCE_IMAGE_TAG" || export IMAGE_CACHE=""
+docker pull $TARGET_IMAGE:$TARGET_IMAGE_TAG && export IMAGE_CACHE="--cache-from $TARGET_IMAGE:$TARGET_IMAGE_TAG" || export IMAGE_CACHE=""
 
 # build the image, login and push
 docker build -f "$DOCKERFILE" $IMAGE_CACHE --build-arg MH_ARCH=$SOURCE_IMAGE --build-arg MH_TAG=$SOURCE_IMAGE_TAG -t "$TARGET_IMAGE:$TARGET_IMAGE_TAG" .
@@ -36,7 +36,7 @@ else
   docker push $TARGET_IMAGE:$ALT_IMAGE_TAG;
 fi
 
-if [ -n $PUSHOVER_USER ] and [ -n $PUSHOVER_TOKEN ]
+if [ -n $PUSHOVER_USER ] && [ -n $PUSHOVER_TOKEN ]
 then
   /usr/bin/curl -s --form-string "token=$PUSHOVER_TOKEN" --form-string "user=$PUSHOVER_USER"  --form-string "title=Docker Build" --form-string "message=Docker build  for $TARGET_IMAGE_TAG is now complete" https://api.pushover.net/1/messages.json
 fi
