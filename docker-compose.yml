@@ -1,18 +1,47 @@
 version: '2'
 services:
+  proxyv2:
+    image: traefik:v2.0 # The official Traefik docker image
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--providers.docker.swarmMode=true"
+    ports:
+      - "80:80"     # The HTTP port
+      - "443:443"   # The HTTP port
+      - "8181:8080" # The Web UI (enabled by --api)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+    labels:
+    - "traefik.enable=false"
+
   kanboard:
     image: mhzawadi/kanboard:latest
     ports:
-     - "80:80"
-     - "443:443"
+      - "80:80"
+      - "443:443"
     volumes:
-     - kanboard_data:/var/www/app/data
-     - kanboard_plugins:/var/www/app/plugins
-     - kanboard_ssl:/etc/nginx/ssl
+      - kanboard_data:/var/www/app/data
+      - kanboard_plugins:/var/www/app/plugins
+    environment:
+      - DB_DRIVER=mysql
+      - MYSQL_HOST=mariadb_10_4
+      - MYSQL_USER=kanboard
+      - MYSQL_PASSWORD=kanboard
+      - MYSQL_DB=kanboard
+  mariadb_10_4:
+    # MySQL 5.7
+    image: mariadb:10.4.10
+    volumes:
+      - mariadb_10_4:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql_password
+      - MYSQL_DATABASE=kanboard
+      - MYSQL_USER=kanboard
+      - MYSQL_PASSWORD=kanboard
+    labels:
+    - "traefik.enable=false"
+
 volumes:
   kanboard_data:
-    driver: local
   kanboard_plugins:
-    driver: local
-  kanboard_ssl:
-    driver: local

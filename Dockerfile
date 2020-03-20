@@ -1,29 +1,35 @@
-ARG MH_ARCH
-ARG MH_TAG
-FROM ${MH_ARCH}:${MH_TAG}
+FROM alpine:3.9.4
 MAINTAINER Matthew Horwood <matt@horwood.biz>
 
-ENV KANBOARD_VERSION 1.2.12
-ENV KANBOARD_TARBALL https://github.com/kanboard/kanboard/archive/v${KANBOARD_VERSION}.tar.gz
+RUN apk update \
+    &&  apk add nginx php7-fpm php7-curl php7-dom php7-xml php7-xmlwriter \
+        php7-tokenizer php7-simplexml php7-gd php7-gmp php7-gettext php7-pcntl \
+        php7-mysqli php7-sockets php7-ctype php7-pecl-mcrypt php7-xmlrpc \
+        php7-session composer php7-pdo_sqlite php7-sqlite3 \
+    && rm -f /var/cache/apk/* \
+    && mkdir -p /var/www/html/ \
+    && mkdir -p /run/nginx;
 
-VOLUME ["/var/www/html/kanboard", "/var/www/html/kanboard/data"]
+ENV KB_SOURCE="https://github.com/kanboard/kanboard/archive/" \
+    KB_VERSION="v1.2.13" \
+    DB_DRIVER="sqlite" \
+    MYSQL_HOST="mysql" \
+    MYSQL_USER="root" \
+    MYSQL_PASSWORD="my-secret-pw" \
+    MYSQL_DB="invoiceplane" \
+    MYSQL_PORT="3306"
+
+COPY config /config
 WORKDIR /var/www/html
+ADD ${KB_SOURCE}/${KB_VERSION}.zip /tmp/
+RUN unzip /tmp/${KB_VERSION}.zip -d /var/www/ && \
+    cp -R /var/www/kanboard-1.2.13/* /var/www/html/ && \
+    chmod +x /config/start.sh; \
+    cp /config/php.ini /etc/php7/php.ini && \
+    cp /config/php_fpm_site.conf /etc/php7/php-fpm.d/www.conf; \
+    chown nobody:nginx /var/www/html/* -R;
 
-RUN apt-get update && \
-    apt-get -y install wget curl zip libzip-dev libgd-dev rsync && \
-    apt-get clean; \
-    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
-    docker-php-ext-configure zip --with-libzip && \
-    docker-php-ext-install -j$(nproc) zip; \
-    docker-php-ext-install -j$(nproc) \
-          mysqli \
-          gd \
-          opcache; \
-    a2enmod rewrite; \
-    cd /usr/src && \
-    wget ${KANBOARD_TARBALL} && \
-    cd /var/www/html && \
-    tar --strip 1 -xzf /usr/src/v${KANBOARD_VERSION}.tar.gz && \
-    chown -R www-data:www-data /var/www/html/*
-
-CMD ["apache2-foreground"]
+VOLUME /var/www/html/data /var/www/html/plugins
+EXPOSE 80
+ENTRYPOINT ["/config/start.sh"]
+CMD ["nginx", "-g", "daemon off;"]
