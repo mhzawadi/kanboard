@@ -11,7 +11,7 @@ RUN apk update \
     && mkdir -p /run/nginx;
 
 ENV KB_SOURCE="https://github.com/kanboard/kanboard/archive/" \
-    KB_VERSION="v1.2.13" \
+    KB_VERSION="v1.2.14" \
     DB_DRIVER="sqlite" \
     MYSQL_HOST="mysql" \
     MYSQL_USER="root" \
@@ -23,7 +23,7 @@ COPY config /config
 WORKDIR /var/www/html
 ADD ${KB_SOURCE}/${KB_VERSION}.zip /tmp/
 RUN unzip /tmp/${KB_VERSION}.zip -d /var/www/ && \
-    cp -R /var/www/kanboard-1.2.13/* /var/www/html/ && \
+    cp -R /var/www/kanboard-${KB_VERSION}/* /var/www/html/ && \
     chmod +x /config/start.sh; \
     cp /config/php.ini /etc/php7/php.ini && \
     cp /config/php_fpm_site.conf /etc/php7/php-fpm.d/www.conf; \
