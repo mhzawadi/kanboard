@@ -1,4 +1,4 @@
-FROM alpine:3.9.4
+FROM alpine:3.14
 MAINTAINER Matthew Horwood <matt@horwood.biz>
 
 RUN apk update \
@@ -11,7 +11,7 @@ RUN apk update \
     && mkdir -p /run/nginx;
 
 ENV KB_SOURCE="https://github.com/kanboard/kanboard/archive/" \
-    KB_VERSION="1.2.16" \
+    KB_VERSION="1.2.20" \
     DB_DRIVER="sqlite" \
     MYSQL_HOST="mysql" \
     MYSQL_USER="root" \
@@ -27,7 +27,7 @@ RUN unzip /tmp/v${KB_VERSION}.zip -d /var/www/ && \
     chmod +x /config/start.sh; \
     cp /config/php.ini /etc/php7/php.ini && \
     cp /config/php_fpm_site.conf /etc/php7/php-fpm.d/www.conf; \
-    cp /config/nginx_site.conf /etc/nginx/conf.d/default.conf; \
+    cp /config/nginx_site.conf /etc/nginx/http.d/default.conf; \
     cp /config/config.default.php /var/www/html/config.php; \
     chown nobody:nginx /var/www/html/* -R;
 

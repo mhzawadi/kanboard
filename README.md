@@ -53,6 +53,5 @@ You can use following tags on Docker hub:
 
 ### how to build
 
-Latest is build from the docker hub once I push to the github repo, the arm versions are built from my mac with the below buildx tool
+Latest is build from the docker hub once I push to the github repo
 
-`docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t mhzawadi/kanboard:v1.5.10.1 --push .`
