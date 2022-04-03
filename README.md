@@ -1,3 +1,9 @@
+# Abandoned!!!!
+
+This repo is now Abandoned in favor of using nextcloud deck, please fork and fix any issues you have.
+
+----
+
 # Kanboard
 <p align="center"><a href="https://hub.docker.com/r/mhzawadi/kanboard"><img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/mhzawadi/kanboard.svg"></a></p>
 
